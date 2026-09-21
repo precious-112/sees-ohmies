@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohmies | SEES 30 Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 h-screen flex items-center justify-center font-sans p-4">
+
+    <!-- 1. MAIN HUB DASHBOARD (Landing Page) -->
+    <div id="hub-screen" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl max-w-3xl w-full border-t-4 border-green-600 block">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-green-700 tracking-widest mb-1">OHMIES</h1>
+            <p class="text-sm text-gray-500 italic mb-2">SEES'30 special</p>
+            <p class="text-xs text-gray-400">Stay informed. Stay connected. Stay heard.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Noticeboard -->
+            <div onclick="switchScreen('news-screen')" class="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:border-green-500 hover:shadow-md transition-all cursor-pointer group">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">📢</span>
+                    <h3 class="font-bold text-gray-800 text-lg group-hover:text-green-700">Noticeboard</h3>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Official SEES 30 news, faculty updates, and timetables.</p>
+                <span class="text-green-600 text-sm font-semibold">Read Updates &rarr;</span>
+            </div>
+
+            <!-- Unity Board -->
+            <div onclick="switchScreen('unity-screen')" class="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:border-green-500 hover:shadow-md transition-all cursor-pointer group">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🤝</span>
+                    <h3 class="font-bold text-gray-800 text-lg group-hover:text-green-700">Unity Board</h3>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Open letters, shared experiences, and words of encouragement.</p>
+                <span class="text-green-600 text-sm font-semibold">Read & Write &rarr;</span>
+            </div>
+
+            <!-- Suggestion Box -->
+            <div onclick="switchScreen('suggestion-screen')" class="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:border-green-500 hover:shadow-md transition-all cursor-pointer group">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">💡</span>
+                    <h3 class="font-bold text-gray-800 text-lg group-hover:text-green-700">Improvements</h3>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Drop ideas for class or departmental upgrades and resources.</p>
+                <span class="text-green-600 text-sm font-semibold">Submit Idea &rarr;</span>
+            </div>
+
+            <!-- Anonymous Clinic -->
+            <div onclick="switchScreen('lobby-screen')" class="bg-gray-800 border border-gray-700 rounded-xl p-5 hover:bg-gray-900 shadow-md transition-all cursor-pointer group">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🛡️</span>
+                    <h3 class="font-bold text-white text-lg group-hover:text-green-400">Anonymous Clinic</h3>
+                </div>
+                <p class="text-xs text-gray-400 mb-4">Feedback Thursday: 100% private space for SEES 30 concerns.</p>
+                <span class="text-green-400 text-sm font-semibold">Enter Safe Space &rarr;</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ANONYMOUS LOBBY SCREEN (Hidden by default) -->
+    <div id="lobby-screen" class="hidden bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border-t-4 border-green-600">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-green-700 tracking-widest mb-1">CLINIC</h1>
+            <p class="text-sm text-gray-500">SEES 30 Feedback Thursday</p>
+        </div>
+        <div class="space-y-5">
+            <input type="text" placeholder="Choose an Alias (e.g. Resistor99)" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500">
+            <button onclick="switchScreen('chat-screen')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all">
+                Enter Waiting Room
+            </button>
+        </div>
+        <button onclick="switchScreen('hub-screen')" class="mt-6 w-full text-sm text-gray-400 underline hover:text-green-600">
+            &larr; Back to Main Hub
+        </button>
+    </div>
+
+    <!-- 3. ANONYMOUS CHAT SCREEN (Hidden by default) -->
+    <div id="chat-screen" class="hidden bg-white rounded-2xl shadow-xl max-w-md w-full h-[600px] border-t-4 border-green-600 flex-col">
+        <div class="bg-gray-50 p-4 border-b flex justify-between items-center rounded-t-2xl">
+            <span class="font-bold text-gray-700">SEES 30 Anonymous Session</span>
+            <button onclick="switchScreen('hub-screen')" class="text-xs text-red-500 font-bold border border-red-500 px-2 py-1 rounded hover:bg-red-50">Exit</button>
+        </div>
+        
+        <div id="chat-messages" class="flex-1 p-4 bg-gray-100 flex flex-col space-y-4 overflow-y-auto">
+            <div class="self-start bg-white text-gray-800 p-3 rounded-lg border shadow-sm rounded-tl-none max-w-[80%]">
+                <p class="text-sm">Host: You are in. What concept or concern are you sharing today?</p>
+            </div>
+        </div>
+
+        <div class="p-4 bg-white border-t rounded-b-2xl flex gap-2">
+            <input id="chat-input" type="text" placeholder="Type anonymously..." class="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-green-500">
+            <button onclick="sendMessage()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold">Send</button>
+        </div>
+    </div>
+
+    <!-- 4. PLACEHOLDER SCREENS FOR OTHER ZONES -->
+    <div id="news-screen" class="hidden bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border-t-4 border-green-600 text-center">
+        <h2 class="text-2xl font-bold text-green-700 mb-4">SEES 30 Noticeboard</h2>
+        <p class="text-sm text-gray-600 mb-6">Official set announcements will appear here.</p>
+        <button onclick="switchScreen('hub-screen')" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold">Back to Hub</button>
+    </div>
+
+    <div id="unity-screen" class="hidden bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border-t-4 border-green-600 text-center">
+        <h2 class="text-2xl font-bold text-green-700 mb-4">Unity Board</h2>
+        <p class="text-sm text-gray-600 mb-6">Open letters and encouragement notes for the set go here.</p>
+        <button onclick="switchScreen('hub-screen')" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold">Back to Hub</button>
+    </div>
+
+    <div id="suggestion-screen" class="hidden bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border-t-4 border-green-600 text-center">
+        <h2 class="text-2xl font-bold text-green-700 mb-4">SEES 30 Improvements</h2>
+        <p class="text-sm text-gray-600 mb-6">Drop your suggestions for class upgrades here.</p>
+        <button onclick="switchScreen('hub-screen')" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold">Back to Hub</button>
+    </div>
+
+    <!-- Link to JavaScript Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

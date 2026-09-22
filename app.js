@@ -2,11 +2,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAGsVPoa-GdtvXy3iNRW1bln1c5GUuYPY",
   authDomain: "ohmies-db.firebaseapp.com",
-  databaseURL: "https://ohmies-db-default-rtdb.firebaseio.com",
+  databaseURL: "PASTE_YOUR_EXACT_DATABASE_URL_HERE", // <-- Paste it here
   projectId: "ohmies-db",
   storageBucket: "ohmies-db.appspot.com",
   messagingSenderId: "934302052206",

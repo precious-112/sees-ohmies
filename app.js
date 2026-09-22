@@ -61,4 +61,51 @@ onChildAdded(postsRef, (snapshot) => {
     if (unityFeed) {
         unityFeed.prepend(postCard);
     }
+});// --- SUGGESTIONS / IMPROVEMENTS LOGIC ---
+
+const submitSuggestionBtn = document.getElementById('submitSuggestionBtn');
+const suggestionInput = document.getElementById('suggestionInput');
+const suggestionFeed = document.getElementById('suggestionFeed');
+
+// 1. Send suggestion to Firebase
+if (submitSuggestionBtn) {
+    submitSuggestionBtn.addEventListener('click', () => {
+        const idea = suggestionInput.value.trim();
+        
+        if (idea === "") {
+            alert("Please write a suggestion before submitting!");
+            return;
+        }
+
+        const suggestionsRef = ref(db, 'suggestions');
+        
+        push(suggestionsRef, {
+            text: idea,
+            timestamp: Date.now()
+        }).then(() => {
+            suggestionInput.value = "";
+            alert("Suggestion submitted successfully!");
+        }).catch((error) => {
+            console.error("Error submitting suggestion: ", error);
+            alert("Failed to submit. Check your connection!");
+        });
+    });
+}
+
+// 2. Real-time listener: Load and display suggestions automatically
+const suggestionsRef = ref(db, 'suggestions');
+onChildAdded(suggestionsRef, (snapshot) => {
+    const data = snapshot.val();
+    
+    const suggestionCard = document.createElement('div');
+    suggestionCard.className = "bg-gray-50 p-4 rounded-lg border-l-4 border-blue-600 shadow-sm mb-3";
+    suggestionCard.innerHTML = `
+        <p class="text-gray-800">${data.text}</p>
+        <span class="text-xs text-gray-400 mt-2 block">SEES'30 Suggestion Box</span>
+    `;
+
+    if (suggestionFeed) {
+        suggestionFeed.prepend(suggestionCard);
+    }
 });
+

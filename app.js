@@ -6,15 +6,16 @@ import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/fi
 const firebaseConfig = {
   apiKey: "AIzaSyAGsVPoa-GdtvXy3iNRW1bln1c5GUuYPY",
   authDomain: "ohmies-db.firebaseapp.com",
+  databaseURL: "https://ohmies-db-default-rtdb.firebaseio.com",
   projectId: "ohmies-db",
   storageBucket: "ohmies-db.appspot.com",
   messagingSenderId: "934302052206",
   appId: "1:934302052206:web:b4d2d52fd64626a7e45b7f"
 };
 
-// Initialize Firebase & explicitly pass the database URL to avoid warnings
+// Initialize Firebase & Database
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app, "https://ohmies-db-default-rtdb.firebaseio.com");
+const db = getDatabase(app);
 
 // DOM Elements for Unity Board
 const submitBtn = document.getElementById('submitUnityBtn');

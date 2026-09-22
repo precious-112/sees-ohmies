@@ -2,17 +2,17 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+// Your web app's Firebase configuration (databaseURL removed so Firebase handles it automatically)
 const firebaseConfig = {
   apiKey: "AIzaSyAGsVPoa-GdtvXy3iNRW1bln1c5GUuYPY",
   authDomain: "ohmies-db.firebaseapp.com",
-  databaseURL: "PASTE_YOUR_EXACT_DATABASE_URL_HERE", // <-- Paste it here
   projectId: "ohmies-db",
   storageBucket: "ohmies-db.appspot.com",
   messagingSenderId: "934302052206",
   appId: "1:934302052206:web:b4d2d52fd64626a7e45b7f"
 };
 
-// Initialize Firebase & Database (Declared only once)
+// Initialize Firebase & Database
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 

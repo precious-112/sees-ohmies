@@ -109,3 +109,83 @@ onChildAdded(suggestionsRef, (snapshot) => {
     }
 });
 
+// --- ANONYMOUS CLINIC / FEEDBACK THURSDAY LOGIC ---
+
+const submitClinicBtn = document.getElementById('submitClinicBtn');
+const clinicInput = document.getElementById('clinicInput');
+const clinicFeed = document.getElementById('clinicFeed');
+const generateSessionBtn = document.getElementById('generateSessionBtn');
+const generatedLinkContainer = document.getElementById('generatedLinkContainer');
+const shareableLinkInput = document.getElementById('shareableLinkInput');
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+const sessionTitleDisplay = document.getElementById('sessionTitleDisplay');
+
+// 1. Detect if a unique session is specified in the URL
+const urlParams = new URLSearchParams(window.location.search);
+const currentSessionId = urlParams.get('session') || 'general-clinic';
+
+if (urlParams.get('session')) {
+    sessionTitleDisplay.textContent = `Active Session: Feedback Thursday (${urlParams.get('session').slice(0, 8)})`;
+}
+
+// 2. Organizer: Generate unique link
+if (generateSessionBtn) {
+    generateSessionBtn.addEventListener('click', () => {
+        const uniqueId = 'thursday_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+        const fullLink = `${window.location.origin}${window.location.pathname}?session=${uniqueId}`;
+        
+        shareableLinkInput.value = fullLink;
+        generatedLinkContainer.classList.remove('hidden');
+    });
+}
+
+// 3. Copy link button
+if (copyLinkBtn) {
+    copyLinkBtn.addEventListener('click', () => {
+        shareableLinkInput.select();
+        navigator.clipboard.writeText(shareableLinkInput.value);
+        alert("Feedback Thursday link copied to clipboard! Drop it in the class group.");
+    });
+}
+
+// 4. Submit secure feedback to the specific session node in Firebase
+if (submitClinicBtn) {
+    submitClinicBtn.addEventListener('click', () => {
+        const message = clinicInput.value.trim();
+        
+        if (message === "") {
+            alert("Please type a message before submitting.");
+            return;
+        }
+
+        const sessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);
+        
+        push(sessionRef, {
+            text: message,
+            timestamp: Date.now()
+        }).then(() => {
+            clinicInput.value = "";
+            alert("Feedback submitted anonymously and securely!");
+        }).catch((error) => {
+            console.error("Error submitting feedback: ", error);
+            alert("Failed to submit. Check your connection!");
+        });
+    });
+}
+
+// 5. Real-time listener for this specific session's feedback
+const activeSessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);
+onChildAdded(activeSessionRef, (snapshot) => {
+    const data = snapshot.val();
+    
+    const card = document.createElement('div');
+    card.className = "bg-gray-800 p-3 rounded-lg border-l-4 border-green-500 text-xs shadow-sm mb-2";
+    card.innerHTML = `
+        <p class="text-gray-200">${data.text}</p>
+        <span class="text-[10px] text-gray-500 mt-1 block">Anonymous SEES'30 Member</span>
+    `;
+
+    if (clinicFeed) {
+        clinicFeed.prepend(card);
+    }
+});

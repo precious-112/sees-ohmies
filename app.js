@@ -190,3 +190,39 @@ onChildAdded(activeSessionRef, (snapshot) => {
         clinicFeed.prepend(card);
     }
 });
+
+// --- ADMIN PASSCODE SECURITY LOGIC ---
+const ADMIN_PIN = "3030"; // You can change this PIN to whatever you prefer!
+const adminLockContainer = document.getElementById('adminLockContainer');
+const organizerToolsContent = document.getElementById('organizerToolsContent');
+const adminPinInput = document.getElementById('adminPinInput');
+const adminLoginBtn = document.getElementById('adminLoginBtn');
+const lockAdminBtn = document.getElementById('lockAdminBtn');
+
+// Remember unlock state during your browser session
+if (sessionStorage.getItem('sees_admin_unlocked') === 'true') {
+    if (adminLockContainer) adminLockContainer.classList.add('hidden');
+    if (organizerToolsContent) organizerToolsContent.classList.remove('hidden');
+}
+
+if (adminLoginBtn) {
+    adminLoginBtn.addEventListener('click', () => {
+        if (adminPinInput && adminPinInput.value === ADMIN_PIN) {
+            sessionStorage.setItem('sees_admin_unlocked', 'true');
+            adminLockContainer.classList.add('hidden');
+            organizerToolsContent.classList.remove('hidden');
+            adminPinInput.value = '';
+        } else {
+            alert("Incorrect Admin PIN!");
+            if (adminPinInput) adminPinInput.value = '';
+        }
+    });
+}
+
+if (lockAdminBtn) {
+    lockAdminBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('sees_admin_unlocked');
+        organizerToolsContent.classList.add('hidden');
+        adminLockContainer.classList.remove('hidden');
+    });
+}

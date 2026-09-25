@@ -1,28 +1,54 @@
 // Import Firebase SDKs from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"; // 'get' is now imported here!
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAGsVPoa-GdtvXy3iNRW1bln1c5GUuYPY",
-  authDomain: "ohmies-db.firebaseapp.com",
-  databaseURL: "https://ohmies-db-default-rtdb.firebaseio.com",
-  projectId: "ohmies-db",
-  storageBucket: "ohmies-db.appspot.com",
-  messagingSenderId: "934302052206",
-  appId: "1:934302052206:web:b4d2d52fd64626a7e45b7f"
+    apiKey: "AIzaSyAGsVPoa-GdtvXy3iNRW1bln1c5GUuYPY",
+    authDomain: "ohmies-db.firebaseapp.com",
+    databaseURL: "https://ohmies-db-default-rtdb.firebaseio.com",
+    projectId: "ohmies-db",
+    storageBucket: "ohmies-db.appspot.com",
+    messagingSenderId: "934302052206",
+    appId: "1:934302052206:web:b4d2d52fd64626a7e45b7f"
 };
 
 // Initialize Firebase & Database
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// DOM Elements for Unity Board
+// --- ALL DOM ELEMENTS (Grouped at the top to prevent errors) ---
 const submitBtn = document.getElementById('submitUnityBtn');
 const unityInput = document.getElementById('unityInput');
 const unityFeed = document.getElementById('unityFeed');
 
-// 1. Send message to Firebase when button is clicked
+const submitClinicBtn = document.getElementById('submitClinicBtn');
+const clinicInput = document.getElementById('clinicInput');
+const clinicFeed = document.getElementById('clinicFeed');
+const generateSessionBtn = document.getElementById('generateSessionBtn');
+const generatedLinkContainer = document.getElementById('generatedLinkContainer');
+const shareableLinkInput = document.getElementById('shareableLinkInput');
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+const sessionTitleDisplay = document.getElementById('sessionTitleDisplay');
+
+const adminLockContainer = document.getElementById('adminLockContainer');
+const organizerToolsContent = document.getElementById('organizerToolsContent');
+const adminPinInput = document.getElementById('adminPinInput');
+const adminLoginBtn = document.getElementById('adminLoginBtn');
+const lockAdminBtn = document.getElementById('lockAdminBtn');
+
+const exportFeedbackBtn = document.getElementById('exportFeedbackBtn');
+
+// 1. Detect if a unique session is specified in the URL
+const urlParams = new URLSearchParams(window.location.search);
+const currentSessionId = urlParams.get('session') || 'general-clinic';
+
+if (urlParams.get('session')) {
+    if (sessionTitleDisplay) sessionTitleDisplay.textContent = `Active Session: Feedback Thursday (${urlParams.get('session').slice(0, 8)})`;
+    if (typeof switchScreen === 'function') switchScreen('lobby-screen');
+}
+
+// --- UNITY BOARD LOGIC ---
 if (submitBtn) {
     submitBtn.addEventListener('click', () => {
         const message = unityInput.value.trim();
@@ -46,7 +72,6 @@ if (submitBtn) {
     });
 }
 
-// 2. Real-time listener: Load and display posts automatically
 const postsRef = ref(db, 'unityBoard');
 onChildAdded(postsRef, (snapshot) => {
     const data = snapshot.val();
@@ -62,7 +87,31 @@ onChildAdded(postsRef, (snapshot) => {
         unityFeed.prepend(postCard);
     }
 });
-/// 4. Submit secure feedback to the specific session node in Firebase (with Spam/Blank Guard)
+
+
+// --- ANONYMOUS CLINIC / FEEDBACK THURSDAY LOGIC ---
+
+// 2. Organizer: Generate unique link
+if (generateSessionBtn) {
+    generateSessionBtn.addEventListener('click', () => {
+        const uniqueId = 'thursday_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+        const fullLink = `${window.location.origin}${window.location.pathname}?session=${uniqueId}`;
+        
+        shareableLinkInput.value = fullLink;
+        generatedLinkContainer.classList.remove('hidden');
+    });
+}
+
+// 3. Copy link button
+if (copyLinkBtn) {
+    copyLinkBtn.addEventListener('click', () => {
+        shareableLinkInput.select();
+        navigator.clipboard.writeText(shareableLinkInput.value);
+        alert("Feedback Thursday link copied to clipboard! Drop it in the class group.");
+    });
+}
+
+// 4. Submit secure feedback to the specific session node in Firebase (Spam Guard ACTIVE)
 if (submitClinicBtn) {
     submitClinicBtn.addEventListener('click', () => {
         const message = clinicInput.value.trim();
@@ -103,71 +152,6 @@ if (submitClinicBtn) {
     });
 }
 
-// --- ANONYMOUS CLINIC / FEEDBACK THURSDAY LOGIC ---
-
-const submitClinicBtn = document.getElementById('submitClinicBtn');
-const clinicInput = document.getElementById('clinicInput');
-const clinicFeed = document.getElementById('clinicFeed');
-const generateSessionBtn = document.getElementById('generateSessionBtn');
-const generatedLinkContainer = document.getElementById('generatedLinkContainer');
-const shareableLinkInput = document.getElementById('shareableLinkInput');
-const copyLinkBtn = document.getElementById('copyLinkBtn');
-const sessionTitleDisplay = document.getElementById('sessionTitleDisplay');
-
-// 1. Detect if a unique session is specified in the URL
-const urlParams = new URLSearchParams(window.location.search);
-const currentSessionId = urlParams.get('session') || 'general-clinic';
-
-if (urlParams.get('session')) {
-    sessionTitleDisplay.textContent = `Active Session: Feedback Thursday (${urlParams.get('session').slice(0, 8)})`;
-    switchScreen('lobby-screen');
-}
-
-// 2. Organizer: Generate unique link
-if (generateSessionBtn) {
-    generateSessionBtn.addEventListener('click', () => {
-        const uniqueId = 'thursday_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
-        const fullLink = `${window.location.origin}${window.location.pathname}?session=${uniqueId}`;
-        
-        shareableLinkInput.value = fullLink;
-        generatedLinkContainer.classList.remove('hidden');
-    });
-}
-
-// 3. Copy link button
-if (copyLinkBtn) {
-    copyLinkBtn.addEventListener('click', () => {
-        shareableLinkInput.select();
-        navigator.clipboard.writeText(shareableLinkInput.value);
-        alert("Feedback Thursday link copied to clipboard! Drop it in the class group.");
-    });
-}
-
-// 4. Submit secure feedback to the specific session node in Firebase
-if (submitClinicBtn) {
-    submitClinicBtn.addEventListener('click', () => {
-        const message = clinicInput.value.trim();
-        
-        if (message === "") {
-            alert("Please type a message before submitting.");
-            return;
-        }
-
-        const sessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);
-        
-        push(sessionRef, {
-            text: message,
-            timestamp: Date.now()
-        }).then(() => {
-            clinicInput.value = "";
-            alert("Feedback submitted anonymously and securely!");
-        }).catch((error) => {
-            console.error("Error submitting feedback: ", error);
-            alert("Failed to submit. Check your connection!");
-        });
-    });
-}
-
 // 5. Real-time listener for this specific session's feedback
 const activeSessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);
 onChildAdded(activeSessionRef, (snapshot) => {
@@ -186,12 +170,7 @@ onChildAdded(activeSessionRef, (snapshot) => {
 });
 
 // --- ADMIN PASSCODE SECURITY LOGIC ---
-const ADMIN_PIN = "3030"; // You can change this PIN to whatever you prefer!
-const adminLockContainer = document.getElementById('adminLockContainer');
-const organizerToolsContent = document.getElementById('organizerToolsContent');
-const adminPinInput = document.getElementById('adminPinInput');
-const adminLoginBtn = document.getElementById('adminLoginBtn');
-const lockAdminBtn = document.getElementById('lockAdminBtn');
+const ADMIN_PIN = "3030"; 
 
 // Remember unlock state during your browser session
 if (sessionStorage.getItem('sees_admin_unlocked') === 'true') {
@@ -222,8 +201,6 @@ if (lockAdminBtn) {
 }
 
 // --- EXPORT SESSION FEEDBACK LOGIC ---
-const exportFeedbackBtn = document.getElementById('exportFeedbackBtn');
-
 if (exportFeedbackBtn) {
     exportFeedbackBtn.addEventListener('click', () => {
         const sessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);

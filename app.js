@@ -242,3 +242,19 @@ if (exportFeedbackBtn) {
         });
     });
 }
+
+// --- OFFLINE / ONLINE NETWORK LISTENER ---
+const offlineBanner = document.getElementById('offlineBanner');
+
+window.addEventListener('offline', () => {
+    if (offlineBanner) {
+        offlineBanner.classList.remove('hidden');
+    }
+});
+
+window.addEventListener('online', () => {
+    if (offlineBanner) {
+        offlineBanner.classList.add('hidden');
+        // Optional: Show a quick "Back online" alert or let the banner just disappear
+    }
+});

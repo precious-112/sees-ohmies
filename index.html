@@ -1,5 +1,8 @@
+Sure — here it is inline:
+
+```html
 <!DOCTYPE html>
-<html lang="en">
+< lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
-<body class="bg-gray-100 text-gray-850 min-h-screen flex items-center justify-center font-sans p-4">
+<body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center font-sans p-4">
 <!-- Network Status Banner -->
 <div id="offlineBanner" class="hidden fixed top-0 left-0 w-full bg-red-600 text-white text-xs font-medium text-center py-1.5 z-50 shadow-md">
     ⚠️ You are offline. Check your connection.
@@ -45,7 +48,7 @@
                 <span class="text-green-600 text-sm font-semibold">Read & Write &rarr;</span>
             </div>
 
-            <!-- Improvements (Suggestion Box) - Restored! -->
+            <!-- Improvements (Suggestion Box) -->
             <div onclick="switchScreen('suggestion-screen')" class="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:border-green-500 hover:shadow-md transition-all cursor-pointer group">
                 <div class="flex items-center gap-3 mb-2">
                     <span class="text-2xl">💡</span>
@@ -67,7 +70,7 @@
         </div>
     </div>
 
-    <!-- 4. ANONYMOUS CLINIC / FEEDBACK THURSDAY SCREEN -->
+    <!-- 2. ANONYMOUS CLINIC / FEEDBACK THURSDAY SCREEN -->
 <div id="lobby-screen" class="hidden bg-gray-900 text-white p-6 md:p-8 rounded-2xl shadow-xl max-w-xl w-full border-t-4 border-green-500">
     <div class="flex justify-between items-center mb-6">
         <div>
@@ -99,7 +102,6 @@
         <!-- Export Feedback Button -->
         <button id="exportFeedbackBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition text-sm mb-2">Export Session Feedback (.txt)</button>
     </div>
-
 
     <!-- Student Submission Form -->
     <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
@@ -138,7 +140,7 @@
         <button onclick="switchScreen('hub-screen')" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold">Back to Hub</button>
     </div>
 
-    <!-- 5. UNITY BOARD SCREEN (Houses the input form and live database feed) -->
+    <!-- 5. UNITY BOARD SCREEN -->
     <div id="unity-screen" class="hidden bg-white p-6 md:p-8 rounded-2xl shadow-xl max-w-xl w-full border-t-4 border-green-600">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-green-700">Unity Board</h2>
@@ -159,30 +161,23 @@
     </div>
 
     <!-- 6. SUGGESTIONS SCREEN -->
-<div id="suggestion-screen" class="hidden bg-white p-6 md:p-8 rounded-2xl shadow-xl max-w-xl w-full border-t-4 border-green-600">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-green-700">SEES 30 Improvements</h2>
-        <button onclick="switchScreen('hub-screen')" class="text-sm text-gray-500 hover:text-gray-800">&larr; Back to Hub</button>
-    </div>
-    
-    <!-- Suggestion Input Form -->
-    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
-        <h3 class="text-sm font-bold text-gray-700 mb-2">Drop an Idea for Class Upgrades</h3>
-        <textarea id="suggestionInput" rows="3" placeholder="Suggest equipment, resources, or departmental changes..." class="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 mb-3 text-sm"></textarea>
-        <button id="submitSuggestionBtn" class="w-full bg-green-700 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-800 transition text-sm">Submit Idea</button>
-    </div>
+    <div id="suggestion-screen" class="hidden bg-white p-6 md:p-8 rounded-2xl shadow-xl max-w-xl w-full border-t-4 border-green-600">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-green-700">SEES 30 Improvements</h2>
+            <button onclick="switchScreen('hub-screen')" class="text-sm text-gray-500 hover:text-gray-800">&larr; Back to Hub</button>
+        </div>
+        
+        <!-- Suggestion Input Form -->
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
+            <h3 class="text-sm font-bold text-gray-700 mb-2">Drop an Idea for Class Upgrades</h3>
+            <textarea id="suggestionInput" rows="3" placeholder="Suggest equipment, resources, or departmental changes..." class="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 mb-3 text-sm"></textarea>
+            <button id="submitSuggestionBtn" class="w-full bg-green-700 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-800 transition text-sm">Submit Idea</button>
+        </div>
 
-    <!-- Live Suggestions Feed Container -->
-    <div id="suggestionFeed" class="space-y-3 max-h-80 overflow-y-auto">
-        <!-- Dynamic suggestions will show up here -->
-    </div>
-</div>
-
-    <!-- 6. SUGGESTIONS SCREEN -->
-    <div id="suggestion-screen" class="hidden bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border-t-4 border-green-600 text-center">
-        <h2 class="text-2xl font-bold text-green-700 mb-4">SEES 30 Improvements</h2>
-        <p class="text-sm text-gray-600 mb-6">Drop your suggestions for class upgrades here.</p>
-        <button onclick="switchScreen('hub-screen')" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold">Back to Hub</button>
+        <!-- Live Suggestions Feed Container -->
+        <div id="suggestionFeed" class="space-y-3 max-h-80 overflow-y-auto">
+            <!-- Dynamic suggestions will show up here -->
+        </div>
     </div>
 
     <!-- Screen Switching Function -->

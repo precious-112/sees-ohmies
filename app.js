@@ -61,53 +61,47 @@ onChildAdded(postsRef, (snapshot) => {
     if (unityFeed) {
         unityFeed.prepend(postCard);
     }
-});// --- SUGGESTIONS / IMPROVEMENTS LOGIC ---
-
-const submitSuggestionBtn = document.getElementById('submitSuggestionBtn');
-const suggestionInput = document.getElementById('suggestionInput');
-const suggestionFeed = document.getElementById('suggestionFeed');
-
-// 1. Send suggestion to Firebase
-if (submitSuggestionBtn) {
-    submitSuggestionBtn.addEventListener('click', () => {
-        const idea = suggestionInput.value.trim();
+});
+/// 4. Submit secure feedback to the specific session node in Firebase (with Spam/Blank Guard)
+if (submitClinicBtn) {
+    submitClinicBtn.addEventListener('click', () => {
+        const message = clinicInput.value.trim();
         
-        if (idea === "") {
-            alert("Please write a suggestion before submitting!");
+        // Guard 1: Check if empty
+        if (message === "") {
+            alert("Please type a message before submitting.");
             return;
         }
 
-        const suggestionsRef = ref(db, 'suggestions');
+        // Guard 2: Check minimum length (e.g., at least 3 characters)
+        if (message.length < 3) {
+            alert("Your message is too short. Please provide a bit more detail.");
+            return;
+        }
+
+        // Guard 3: Simple cooldown check to prevent rapid-fire spam
+        const lastSubmitted = localStorage.getItem('last_clinic_submission') || 0;
+        const now = Date.now();
+        if (now - lastSubmitted < 5000) { // 5 seconds cooldown
+            alert("Please wait a few seconds before sending another message.");
+            return;
+        }
+
+        const sessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);
         
-        push(suggestionsRef, {
-            text: idea,
+        push(sessionRef, {
+            text: message,
             timestamp: Date.now()
         }).then(() => {
-            suggestionInput.value = "";
-            alert("Suggestion submitted successfully!");
+            clinicInput.value = "";
+            localStorage.setItem('last_clinic_submission', Date.now());
+            alert("Feedback submitted anonymously and securely!");
         }).catch((error) => {
-            console.error("Error submitting suggestion: ", error);
+            console.error("Error submitting feedback: ", error);
             alert("Failed to submit. Check your connection!");
         });
     });
 }
-
-// 2. Real-time listener: Load and display suggestions automatically
-const suggestionsRef = ref(db, 'suggestions');
-onChildAdded(suggestionsRef, (snapshot) => {
-    const data = snapshot.val();
-    
-    const suggestionCard = document.createElement('div');
-    suggestionCard.className = "bg-gray-50 p-4 rounded-lg border-l-4 border-blue-600 shadow-sm mb-3";
-    suggestionCard.innerHTML = `
-        <p class="text-gray-800">${data.text}</p>
-        <span class="text-xs text-gray-400 mt-2 block">SEES'30 Suggestion Box</span>
-    `;
-
-    if (suggestionFeed) {
-        suggestionFeed.prepend(suggestionCard);
-    }
-});
 
 // --- ANONYMOUS CLINIC / FEEDBACK THURSDAY LOGIC ---
 

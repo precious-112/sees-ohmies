@@ -126,6 +126,7 @@ const currentSessionId = urlParams.get('session') || 'general-clinic';
 
 if (urlParams.get('session')) {
     sessionTitleDisplay.textContent = `Active Session: Feedback Thursday (${urlParams.get('session').slice(0, 8)})`;
+    switchScreen('lobby-screen');
 }
 
 // 2. Organizer: Generate unique link

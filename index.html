@@ -1,25 +1,22 @@
-Sure — here it is inline:
-
-```html
 <!DOCTYPE html>
-< lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ohmies | SEES 30 Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#15803d">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#15803d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center font-sans p-4">
-<!-- Network Status Banner -->
-<div id="offlineBanner" class="hidden fixed top-0 left-0 w-full bg-red-600 text-white text-xs font-medium text-center py-1.5 z-50 shadow-md">
-    ⚠️ You are offline. Check your connection.
-</div> 
+    <!-- Network Status Banner -->
+    <div id="offlineBanner" class="hidden fixed top-0 left-0 w-full bg-red-600 text-white text-xs font-medium text-center py-1.5 z-50 shadow-md">
+        ⚠️ You are offline. Check your connection.
+    </div> 
 
-  <!-- 1. MAIN HUB DASHBOARD (Landing Page) -->
+    <!-- 1. MAIN HUB DASHBOARD (Landing Page) -->
     <div id="hub-screen" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl max-w-3xl w-full border-t-4 border-green-600 block">
         <div class="text-center mb-8">
             <h1 class="text-4xl font-extrabold text-green-700 tracking-widest mb-1">OHMIES</h1>
@@ -71,48 +68,53 @@ Sure — here it is inline:
     </div>
 
     <!-- 2. ANONYMOUS CLINIC / FEEDBACK THURSDAY SCREEN -->
-<div id="lobby-screen" class="hidden bg-gray-900 text-white p-6 md:p-8 rounded-2xl shadow-xl max-w-xl w-full border-t-4 border-green-500">
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h2 class="text-2xl font-bold text-green-400">Anonymous Clinic</h2>
-            <p id="sessionTitleDisplay" class="text-xs text-gray-400 mt-1">Feedback Thursday Secure Safe Space</p>
+    <div id="lobby-screen" class="hidden bg-gray-900 text-white p-6 md:p-8 rounded-2xl shadow-xl max-w-xl w-full border-t-4 border-green-500">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-green-400">Anonymous Clinic</h2>
+                <p id="sessionTitleDisplay" class="text-xs text-gray-400 mt-1">Feedback Thursday Secure Safe Space</p>
+            </div>
+            <button onclick="switchScreen('hub-screen')" class="text-sm text-gray-400 hover:text-white">&larr; Back to Hub</button>
         </div>
-        <button onclick="switchScreen('hub-screen')" class="text-sm text-gray-400 hover:text-white">&larr; Back to Hub</button>
-    </div>
 
-   <!-- Admin Lock & Organizer Tools Box -->
-    <div id="adminLockContainer" class="bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
-        <h3 class="text-xs font-semibold text-green-400 uppercase tracking-wider mb-2">Organizer Access Required</h3>
-        <div class="flex gap-2">
-            <input type="password" id="adminPinInput" placeholder="Enter Admin PIN" class="p-2 bg-gray-900 border border-gray-700 rounded text-xs text-white w-full focus:outline-none focus:ring-1 focus:ring-green-500">
-            <button id="adminLoginBtn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs transition font-medium whitespace-nowrap">Unlock</button>
+       <!-- Admin Lock & Organizer Tools Box -->
+        <div id="adminLockContainer" class="bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
+            <h3 class="text-xs font-semibold text-green-400 uppercase tracking-wider mb-2">Organizer Access Required</h3>
+            <div class="flex gap-2">
+                <input type="password" id="adminPinInput" placeholder="Enter Admin PIN" class="p-2 bg-gray-900 border border-gray-700 rounded text-xs text-white w-full focus:outline-none focus:ring-1 focus:ring-green-500">
+                <button id="adminLoginBtn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs transition font-medium whitespace-nowrap">Unlock</button>
+            </div>
         </div>
-    </div>
 
-    <div id="organizerToolsContent" class="hidden bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
-        <div class="flex justify-between items-center mb-2">
-            <h3 class="text-xs font-semibold text-green-400 uppercase tracking-wider">Organizer Tools</h3>
-            <button id="lockAdminBtn" class="text-[10px] text-red-400 hover:underline">Lock Again</button>
+        <div id="organizerToolsContent" class="hidden bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-xs font-semibold text-green-400 uppercase tracking-wider">Organizer Tools</h3>
+                <button id="lockAdminBtn" class="text-[10px] text-red-400 hover:underline">Lock Again</button>
+            </div>
+            <button id="generateSessionBtn" class="w-full bg-green-600 text-white px-3 py-2 rounded-lg font-medium hover:bg-green-700 transition text-sm mb-2">Generate New Feedback Thursday Link</button>
+            <div id="generatedLinkContainer" class="hidden">
+                <input type="text" id="shareableLinkInput" readonly class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-xs text-gray-300 mb-2 select-all">
+                <button id="copyLinkBtn" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-1.5 rounded text-xs transition">Copy Link for Class Group</button>
+            </div>
+            <button id="exportFeedbackBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition text-sm mb-2">Export Session Feedback (.txt)</button>
+
+            <!-- Admin Noticeboard Broadcaster -->
+            <hr class="border-gray-700 my-4">
+            <h3 class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-2">Post Official Announcement</h3>
+            <textarea id="adminNoticeInput" rows="2" placeholder="Write a SEES'30 update..." class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-sm text-gray-200 mb-2"></textarea>
+            <button id="postNoticeBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition text-sm">Broadcast Notice</button>
         </div>
-        <button id="generateSessionBtn" class="w-full bg-green-600 text-white px-3 py-2 rounded-lg font-medium hover:bg-green-700 transition text-sm mb-2">Generate New Feedback Thursday Link</button>
-        <div id="generatedLinkContainer" class="hidden">
-            <input type="text" id="shareableLinkInput" readonly class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-xs text-gray-300 mb-2 select-all">
-            <button id="copyLinkBtn" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-1.5 rounded text-xs transition">Copy Link for Class Group</button>
+
+        <!-- Student Submission Form -->
+        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
+            <h3 class="text-sm font-bold text-white mb-2">Drop Your Anonymous Concern</h3>
+            <textarea id="clinicInput" rows="3" placeholder="Your identity is 100% hidden. Speak your mind freely..." class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 mb-3 text-sm text-white"></textarea>
+            <button id="submitClinicBtn" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition text-sm">Submit Securely</button>
         </div>
-        <!-- Export Feedback Button -->
-        <button id="exportFeedbackBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition text-sm mb-2">Export Session Feedback (.txt)</button>
-    </div>
 
-    <!-- Student Submission Form -->
-    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
-        <h3 class="text-sm font-bold text-white mb-2">Drop Your Anonymous Concern</h3>
-        <textarea id="clinicInput" rows="3" placeholder="Your identity is 100% hidden. Speak your mind freely..." class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 mb-3 text-sm text-white"></textarea>
-        <button id="submitClinicBtn" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition text-sm">Submit Securely</button>
+        <!-- Live Feedback Feed -->
+        <div id="clinicFeed" class="space-y-3 max-h-60 overflow-y-auto"></div>
     </div>
-
-    <!-- Live Feedback Feed -->
-    <div id="clinicFeed" class="space-y-3 max-h-60 overflow-y-auto"></div>
-</div>
 
     <!-- 3. ANONYMOUS CHAT SCREEN -->
     <div id="chat-screen" class="hidden bg-white rounded-2xl shadow-xl max-w-md w-full h-[600px] border-t-4 border-green-600 flex-col">
@@ -136,7 +138,9 @@ Sure — here it is inline:
     <!-- 4. NOTICEBOARD SCREEN -->
     <div id="news-screen" class="hidden bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border-t-4 border-green-600 text-center">
         <h2 class="text-2xl font-bold text-green-700 mb-4">SEES 30 Noticeboard</h2>
-        <p class="text-sm text-gray-600 mb-6">Official set announcements will appear here.</p>
+        <div id="noticeFeed" class="space-y-3 max-h-80 overflow-y-auto mb-6 text-left">
+            <!-- Dynamic announcements will appear here -->
+        </div>
         <button onclick="switchScreen('hub-screen')" class="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold">Back to Hub</button>
     </div>
 

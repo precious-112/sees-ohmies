@@ -39,6 +39,19 @@ const lockAdminBtn = document.getElementById('lockAdminBtn');
 
 const exportFeedbackBtn = document.getElementById('exportFeedbackBtn');
 
+// --- AUTOMATED PROFANITY FILTER ---
+const blockedWords = ['fuck', 'shit', 'bitch', 'asshole', 'stupid', 'idiot']; // You can add more words here
+
+function censorText(text) {
+    let safeText = text;
+    blockedWords.forEach(word => {
+        // This looks for the exact word (case-insensitive) and replaces it
+        const regex = new RegExp(`\\b${word}\\b`, 'gi');
+        safeText = safeText.replace(regex, '***');
+    });
+    return safeText;
+}
+
 // 1. Detect if a unique session is specified in the URL
 const urlParams = new URLSearchParams(window.location.search);
 const currentSessionId = urlParams.get('session') || 'general-clinic';
@@ -60,8 +73,9 @@ if (submitBtn) {
 
         const postsRef = ref(db, 'unityBoard');
         
+        // 👇 The filter is applied right here 👇
         push(postsRef, {
-            text: message,
+            text: censorText(message), 
             timestamp: Date.now()
         }).then(() => {
             unityInput.value = "";
@@ -72,8 +86,8 @@ if (submitBtn) {
     });
 }
 
-const postsRef = ref(db, 'unityBoard');
-onChildAdded(postsRef, (snapshot) => {
+const displayPostsRef = ref(db, 'unityBoard');
+onChildAdded(displayPostsRef, (snapshot) => {
     const data = snapshot.val();
     
     const postCard = document.createElement('div');
@@ -87,7 +101,6 @@ onChildAdded(postsRef, (snapshot) => {
         unityFeed.prepend(postCard);
     }
 });
-
 
 // --- ANONYMOUS CLINIC / FEEDBACK THURSDAY LOGIC ---
 
@@ -116,30 +129,28 @@ if (submitClinicBtn) {
     submitClinicBtn.addEventListener('click', () => {
         const message = clinicInput.value.trim();
         
-        // Guard 1: Check if empty
         if (message === "") {
             alert("Please type a message before submitting.");
             return;
         }
 
-        // Guard 2: Check minimum length (e.g., at least 3 characters)
         if (message.length < 3) {
             alert("Your message is too short. Please provide a bit more detail.");
             return;
         }
 
-        // Guard 3: Simple cooldown check to prevent rapid-fire spam
         const lastSubmitted = localStorage.getItem('last_clinic_submission') || 0;
         const now = Date.now();
-        if (now - lastSubmitted < 5000) { // 5 seconds cooldown
+        if (now - lastSubmitted < 5000) { 
             alert("Please wait a few seconds before sending another message.");
             return;
         }
 
         const sessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);
         
+        // 👇 The filter is applied right here 👇
         push(sessionRef, {
-            text: message,
+            text: censorText(message),
             timestamp: Date.now()
         }).then(() => {
             clinicInput.value = "";

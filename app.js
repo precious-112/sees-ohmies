@@ -1,7 +1,6 @@
 // Import Firebase SDKs from CDN
-import { getDatabase, ref, push, onChildAdded, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"; // 'get' is now imported here!
+import { getDatabase, ref, push, onChildAdded, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,7 +17,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- ALL DOM ELEMENTS (Grouped at the top to prevent errors) ---
+// --- ALL DOM ELEMENTS ---
 const submitBtn = document.getElementById('submitUnityBtn');
 const unityInput = document.getElementById('unityInput');
 const unityFeed = document.getElementById('unityFeed');
@@ -41,12 +40,11 @@ const lockAdminBtn = document.getElementById('lockAdminBtn');
 const exportFeedbackBtn = document.getElementById('exportFeedbackBtn');
 
 // --- AUTOMATED PROFANITY FILTER ---
-const blockedWords = ['fuck', 'shit', 'bitch', 'asshole', 'stupid', 'idiot']; // You can add more words here
+const blockedWords = ['fuck', 'shit', 'bitch', 'asshole', 'stupid', 'idiot']; 
 
 function censorText(text) {
     let safeText = text;
     blockedWords.forEach(word => {
-        // This looks for the exact word (case-insensitive) and replaces it
         const regex = new RegExp(`\\b${word}\\b`, 'gi');
         safeText = safeText.replace(regex, '***');
     });
@@ -74,7 +72,6 @@ if (submitBtn) {
 
         const postsRef = ref(db, 'unityBoard');
         
-        // 👇 The filter is applied right here 👇
         push(postsRef, {
             text: censorText(message), 
             timestamp: Date.now()
@@ -103,9 +100,7 @@ onChildAdded(displayPostsRef, (snapshot) => {
     }
 });
 
-// --- ANONYMOUS CLINIC / FEEDBACK THURSDAY LOGIC ---
-
-// 2. Organizer: Generate unique link
+// --- ANONYMOUS CLINIC LOGIC ---
 if (generateSessionBtn) {
     generateSessionBtn.addEventListener('click', () => {
         const uniqueId = 'thursday_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
@@ -116,7 +111,6 @@ if (generateSessionBtn) {
     });
 }
 
-// 3. Copy link button
 if (copyLinkBtn) {
     copyLinkBtn.addEventListener('click', () => {
         shareableLinkInput.select();
@@ -125,7 +119,6 @@ if (copyLinkBtn) {
     });
 }
 
-// 4. Submit secure feedback to the specific session node in Firebase (Spam Guard ACTIVE)
 if (submitClinicBtn) {
     submitClinicBtn.addEventListener('click', () => {
         const message = clinicInput.value.trim();
@@ -149,7 +142,6 @@ if (submitClinicBtn) {
 
         const sessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);
         
-        // 👇 The filter is applied right here 👇
         push(sessionRef, {
             text: censorText(message),
             timestamp: Date.now()
@@ -164,7 +156,6 @@ if (submitClinicBtn) {
     });
 }
 
-// 5. Real-time listener for this specific session's feedback
 const activeSessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);
 onChildAdded(activeSessionRef, (snapshot) => {
     const data = snapshot.val();
@@ -181,10 +172,9 @@ onChildAdded(activeSessionRef, (snapshot) => {
     }
 });
 
-// --- ADMIN PASSCODE SECURITY LOGIC ---
+// --- ADMIN PASSCODE SECURITY ---
 const ADMIN_PIN = "3030"; 
 
-// Remember unlock state during your browser session
 if (sessionStorage.getItem('sees_admin_unlocked') === 'true') {
     if (adminLockContainer) adminLockContainer.classList.add('hidden');
     if (organizerToolsContent) organizerToolsContent.classList.remove('hidden');
@@ -212,7 +202,7 @@ if (lockAdminBtn) {
     });
 }
 
-// --- EXPORT SESSION FEEDBACK LOGIC ---
+// --- EXPORT SESSION FEEDBACK ---
 if (exportFeedbackBtn) {
     exportFeedbackBtn.addEventListener('click', () => {
         const sessionRef = ref(db, `clinicSessions/${currentSessionId}/feedbacks`);
@@ -238,7 +228,6 @@ if (exportFeedbackBtn) {
                 count++;
             });
 
-            // Trigger file download
             const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -267,7 +256,6 @@ window.addEventListener('offline', () => {
 window.addEventListener('online', () => {
     if (offlineBanner) {
         offlineBanner.classList.add('hidden');
-        // Optional: Show a quick "Back online" alert or let the banner just disappear
     }
 });
 
@@ -288,8 +276,8 @@ if (submitSuggestionBtn) {
         const ideasRef = ref(db, 'suggestions');
         
         push(ideasRef, {
-            text: censorText(message), // Profanity filter applied!
-            upvotes: 0, // Starts with 0 votes
+            text: censorText(message), 
+            upvotes: 0, 
             timestamp: Date.now()
         }).then(() => {
             suggestionInput.value = "";
@@ -301,7 +289,6 @@ if (submitSuggestionBtn) {
     });
 }
 
-// Display Live Suggestions with Upvote Button
 const ideasRef = ref(db, 'suggestions');
 onChildAdded(ideasRef, (snapshot) => {
     const data = snapshot.val();
@@ -318,16 +305,14 @@ onChildAdded(ideasRef, (snapshot) => {
         </button>
     `;
     
-    // Upvote Click Listener
     const upvoteBtn = card.querySelector('.upvote-btn');
     const voteCountSpan = card.querySelector('.vote-count');
     
     upvoteBtn.addEventListener('click', () => {
-        upvoteBtn.disabled = true; // Prevents spam clicking
+        upvoteBtn.disabled = true; 
         currentVotes += 1;
         voteCountSpan.innerText = currentVotes;
         
-        // Update the vote count in the database
         const specificIdeaRef = ref(db, `suggestions/${ideaKey}`);
         update(specificIdeaRef, {
             upvotes: currentVotes
@@ -338,5 +323,45 @@ onChildAdded(ideasRef, (snapshot) => {
 
     if (suggestionFeed) {
         suggestionFeed.prepend(card);
+    }
+});
+
+// --- ADMIN NOTICEBOARD BROADCASTER ---
+const postNoticeBtn = document.getElementById('postNoticeBtn');
+const adminNoticeInput = document.getElementById('adminNoticeInput');
+const noticeFeed = document.getElementById('noticeFeed'); 
+
+if (postNoticeBtn) {
+    postNoticeBtn.addEventListener('click', () => {
+        const text = adminNoticeInput.value.trim();
+        if (text === "") {
+            alert("Write an announcement first!");
+            return;
+        }
+
+        const noticesRef = ref(db, 'announcements');
+        push(noticesRef, {
+            message: text,
+            timestamp: Date.now()
+        }).then(() => {
+            adminNoticeInput.value = "";
+            alert("Announcement broadcasted successfully!");
+        });
+    });
+}
+
+const noticesRef = ref(db, 'announcements');
+onChildAdded(noticesRef, (snapshot) => {
+    const data = snapshot.val();
+    
+    const noticeCard = document.createElement('div');
+    noticeCard.className = "bg-blue-50 border-l-4 border-blue-600 p-3 mb-3 rounded shadow-sm text-left";
+    noticeCard.innerHTML = `
+        <p class="text-sm text-gray-800 font-medium">${data.message}</p>
+        <span class="text-[10px] text-gray-500 mt-1 block">Official Update • ${new Date(data.timestamp).toLocaleDateString()}</span>
+    `;
+    
+    if (noticeFeed) {
+        noticeFeed.prepend(noticeCard);
     }
 });

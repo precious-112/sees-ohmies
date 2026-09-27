@@ -1,4 +1,5 @@
 // Import Firebase SDKs from CDN
+import { getDatabase, ref, push, onChildAdded, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"; // 'get' is now imported here!
 
@@ -267,5 +268,75 @@ window.addEventListener('online', () => {
     if (offlineBanner) {
         offlineBanner.classList.add('hidden');
         // Optional: Show a quick "Back online" alert or let the banner just disappear
+    }
+});
+
+// --- IMPROVEMENTS / SUGGESTION BOX LOGIC ---
+const submitSuggestionBtn = document.getElementById('submitSuggestionBtn');
+const suggestionInput = document.getElementById('suggestionInput');
+const suggestionFeed = document.getElementById('suggestionFeed');
+
+if (submitSuggestionBtn) {
+    submitSuggestionBtn.addEventListener('click', () => {
+        const message = suggestionInput.value.trim();
+        
+        if (message === "") {
+            alert("Please write an idea before submitting!");
+            return;
+        }
+
+        const ideasRef = ref(db, 'suggestions');
+        
+        push(ideasRef, {
+            text: censorText(message), // Profanity filter applied!
+            upvotes: 0, // Starts with 0 votes
+            timestamp: Date.now()
+        }).then(() => {
+            suggestionInput.value = "";
+            alert("Awesome! Your idea has been dropped securely.");
+        }).catch((error) => {
+            console.error("Error submitting idea:", error);
+            alert("Failed to submit. Check your connection!");
+        });
+    });
+}
+
+// Display Live Suggestions with Upvote Button
+const ideasRef = ref(db, 'suggestions');
+onChildAdded(ideasRef, (snapshot) => {
+    const data = snapshot.val();
+    const ideaKey = snapshot.key; 
+    let currentVotes = data.upvotes || 0;
+    
+    const card = document.createElement('div');
+    card.className = "bg-gray-50 p-3 rounded-lg border-l-4 border-green-600 shadow-sm mb-2 flex justify-between items-start gap-3";
+    
+    card.innerHTML = `
+        <p class="text-sm text-gray-800 flex-1">${data.text}</p>
+        <button class="upvote-btn flex items-center gap-1 bg-white border border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200 px-2 py-1 rounded text-xs transition-colors shadow-sm">
+            <span>❤️</span> <span class="vote-count font-bold">${currentVotes}</span>
+        </button>
+    `;
+    
+    // Upvote Click Listener
+    const upvoteBtn = card.querySelector('.upvote-btn');
+    const voteCountSpan = card.querySelector('.vote-count');
+    
+    upvoteBtn.addEventListener('click', () => {
+        upvoteBtn.disabled = true; // Prevents spam clicking
+        currentVotes += 1;
+        voteCountSpan.innerText = currentVotes;
+        
+        // Update the vote count in the database
+        const specificIdeaRef = ref(db, `suggestions/${ideaKey}`);
+        update(specificIdeaRef, {
+            upvotes: currentVotes
+        }).then(() => {
+            upvoteBtn.classList.add('text-red-500', 'border-red-200', 'bg-red-50');
+        });
+    });
+
+    if (suggestionFeed) {
+        suggestionFeed.prepend(card);
     }
 });
